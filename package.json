@@ -1,0 +1,43 @@
+{
+  "name": "neopie-bridge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "pre-test": "npx hardhat node",
+    "invoke": "hh run ./invoke.js --network NEOX",
+    "invoke-pie": "hh run ./invoke-pie.js --network NEOX",
+    "invoke-oneo": "hh run ./invoke-oneo.js --network NEOX",
+    "invoke-heimdall": "hh run ./invoke-heimdall.js --network NEOX"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
+    "@nomicfoundation/hardhat-ethers": "^3.0.7",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@openzeppelin/hardhat-upgrades": "^3.0.0",
+    "@openzeppelin/test-helpers": "^0.5.16",
+    "ethers": "^6.13.4",
+    "hardhat": "^2.22.9",
+    "hardhat-abi-exporter": "^2.10.1",
+    "hardhat-console": "^1.0.0",
+    "hardhat-contract-sizer": "^2.7.0",
+    "prettier": "^2.8.2",
+    "prettier-plugin-solidity": "^1.1.1"
+  },
+  "dependencies": {
+    "@anders-t/ethers-ledger": "^1.0.4",
+    "@chainlink/contracts": "^0.6.1",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@openzeppelin/contracts": "^4.8.0",
+    "@openzeppelin/contracts-upgradeable": "^4.8.0",
+    "@poanet/solidity-flattener": "^3.0.9",
+    "axios": "^1.2.2",
+    "chai": "^4.3.7",
+    "dotenv": "^16.0.3",
+    "fetch": "^1.1.0",
+    "fetch-json": "^3.0.2",
+    "inquirer": "^8.2.6",
+    "node-fetch": "^3.3.0"
+  }
+}
