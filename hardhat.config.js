@@ -37,4 +37,20 @@ module.exports = {
     },
   },
   defaultNetwork: "NEOX",
+  etherscan: {
+    apiKey: "bypass", // Blockscout might not require an API key, but it's good practice to have it ready.
+    customChains: [
+      {
+        network: "NEOX",
+        chainId: 47763,
+        urls: {
+          apiURL: "https://xexplorer.neo.org/api", // Replace this with your Blockscout API endpoint
+          browserURL: "https://xexplorer.neo.org", // Replace this with your Blockscout explorer URL
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: true,
+  },
 };
