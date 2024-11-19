@@ -20,7 +20,6 @@ contract NeoPie is ERC20, Ownable {
         _mint(account, amount);
     }
 
-    // A function to burn tokens, can only be executed by the minter
     function burn(address account, uint256 amount) public {
         require(account == msg.sender, "Not authorized");
         _burn(account, amount);
