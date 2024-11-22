@@ -5,12 +5,13 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 interface NEOPIE {
     function mint(address account, uint amount) external;
 }
 
-contract ONEO is ERC20, Ownable, ReentrancyGuard {
+contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
     using Address for address;
 
     event MinterChanged(address indexed newMinter);
@@ -66,7 +67,7 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard {
     }
 
     // Function for users to claim their rewards
-    function claim() public nonReentrant {
+    function claim() public whenNotPaused nonReentrant {
         address sender = msg.sender;
         uint bal = balanceOf(sender);
 
@@ -90,7 +91,7 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard {
     function transfer(
         address recipient,
         uint256 amount
-    ) public override returns (bool) {
+    ) public override whenNotPaused returns (bool) {
         address sender = msg.sender;
         uint senderBal = balanceOf(sender);
         uint receiverBal = balanceOf(recipient);
@@ -109,7 +110,7 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard {
         address sender,
         address recipient,
         uint256 amount
-    ) public override returns (bool) {
+    ) public override whenNotPaused returns (bool) {
         uint senderBal = balanceOf(sender);
         uint receiverBal = balanceOf(recipient);
         bool isTransffered = super.transferFrom(sender, recipient, amount);
@@ -194,10 +195,17 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard {
         rewardTokenAddress = _rewardTokenAddress;
     }
 
-    // Function to update minter
     function setMinter(address newMinter) external onlyOwner {
         require(newMinter != address(0), "Minter cannot be the zero address");
         minter = newMinter;
         emit MinterChanged(newMinter);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }
