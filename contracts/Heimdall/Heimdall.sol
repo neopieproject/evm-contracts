@@ -75,11 +75,11 @@ contract Heimdall is
         address receiver,
         uint amount
     ) public onlyOwner {
-        require(MintMap[no] != true, "Already locked.");
+        require(!MintMap[no], "Transaction already processed: Mint locked.");
         address evmTokenAddress = getEVMTokenAddress(neoAddress);
-        require(evmTokenAddress != address(0), "Can't find EVM token address.");
-        require(receiver != address(0), "Check receiver.");
-        require(amount > 0, "Check amount");
+        require(evmTokenAddress != address(0), "Invalid NEO token address: EVM token not found.");
+        require(receiver != address(0), "Invalid receiver address: Cannot be zero.");
+        require(amount > 0, "Invalid amount: Must be greater than zero.");
 
         MintMap[no] = true;
         mintNo++;
@@ -97,9 +97,9 @@ contract Heimdall is
         uint amount
     ) public nonReentrant {
         address neoTokenAddress = getNEOTokenAddress(evmTokenAddress);
-        require(neoTokenAddress != address(0), "Can't find Neo token address.");
-        require(receiver != address(0), "Check receiver.");
-        require(amount > 0, "Check amount");
+        require(neoTokenAddress != address(0), "Invalid EVM token address: NEO token not found.");
+        require(receiver != address(0), "Invalid receiver address: Cannot be zero.");
+        require(amount > 0, "Invalid amount: Must be greater than zero.");
 
         IERC20Upgradeable(evmTokenAddress).transferFrom(
             msg.sender,
@@ -137,8 +137,8 @@ contract Heimdall is
         address addressOnNEO,
         address addressOnChain
     ) public onlyOwner {
-        require(addressOnNEO != address(0), "Check address");
-        require(addressOnChain != address(0), "Check address");
+        require(addressOnNEO != address(0), "Invalid NEO token address: Cannot be zero.");
+        require(addressOnChain != address(0), "Invalid EVM token address: Cannot be zero.");
 
         NEOToEVM[addressOnNEO] = addressOnChain;
         EVMToNEO[addressOnChain] = addressOnNEO;
@@ -168,8 +168,8 @@ contract Heimdall is
 
     // Function to set the fee token address
     function setFee(address tokenAddress, uint amount) public onlyOwner {
-        require(tokenAddress != address(0), "Invalid address");
-        require(amount >= 0, "Amount should be greater than or equal to 0");
+        require(tokenAddress != address(0), "Invalid fee token address: Cannot be zero.");
+        require(amount >= 0, "Invalid fee amount: Must be non-negative.");
         feeToken = tokenAddress;
         feeAmount = amount;
         emit FeeChanged(tokenAddress, amount);
@@ -177,16 +177,16 @@ contract Heimdall is
 
     // ADMIN FUNCTIONS: Function to set the fee receiver
     function setFeeReceiver(address _address) public onlyOwner {
-        require(_address != address(0), "Invalid address");
+        require(_address != address(0), "Invalid fee receiver address: Cannot be zero.");
         feeReceiver = _address;
     }
 
-    // ADMIN FUNCTIONS: function to control mint no manually for incidents
+    // ADMIN FUNCTIONS: Function to control mint no manually for incidents
     function setMintNo(uint no) public onlyOwner {
         mintNo = no;
     }
 
-    // ADMIN FUNCTIONS: function to control burn no manually for incidents
+    // ADMIN FUNCTIONS: Function to control burn no manually for incidents
     function setBurnNo(uint no) public onlyOwner {
         burnNo = no;
     }
