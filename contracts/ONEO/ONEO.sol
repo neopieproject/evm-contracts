@@ -56,9 +56,10 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
 
     address private _pendingOwner;
 
-    constructor(address _minter) ERC20("Oh! NEO", "ONEO") {
-        minter = _minter;
+    constructor(address _minter, address timelock) ERC20("Oh! NEO", "ONEO") {
+        minter = _minter; // Supposed to be Heimdall CA
         lastBlock = block.number;
+        transferOwnership(timelock);
     }
 
     function decimals() public pure override returns (uint8) {
