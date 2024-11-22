@@ -23,6 +23,14 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
         uint256 newReward,
         address indexed changedBy
     );
+    event OwnershipTransferInitiated(
+        address indexed previousOwner,
+        address indexed pendingOwner
+    );
+    event OwnershipTransferCompleted(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     // Mapping for keeping track of each address's reward debt
     mapping(address => uint) public RewardDebtMap;
@@ -45,6 +53,8 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
 
     // Precision factor to avoid rounding errors
     uint private REWARDS_PRECISION = 1e12;
+
+    address private _pendingOwner;
 
     constructor(address _minter) ERC20("Oh! NEO", "ONEO") {
         minter = _minter;
@@ -193,7 +203,7 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
 
         uint256 oldReward = rewardsPerBlock;
         rewardsPerBlock = perBlock;
-        
+
         emit RewardChange(oldReward, perBlock, msg.sender);
     }
 
@@ -216,5 +226,22 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
 
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    function transferOwnership(address newOwner) public override onlyOwner {
+        require(newOwner != address(0), "New owner is the zero address");
+        _pendingOwner = newOwner;
+        emit OwnershipTransferInitiated(owner(), newOwner);
+    }
+
+    function claimOwnership() public {
+        require(msg.sender == _pendingOwner, "Caller is not the pending owner");
+        emit OwnershipTransferCompleted(owner(), _pendingOwner);
+        _transferOwnership(_pendingOwner);
+        _pendingOwner = address(0); // Reset pending owner
+    }
+
+    function pendingOwner() public view returns (address) {
+        return _pendingOwner;
     }
 }
