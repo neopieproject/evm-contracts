@@ -18,6 +18,11 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
     event TokenMinted(address indexed to, uint256 amount);
     event TokenBurned(address indexed from, uint256 amount);
     event RewardClaimed(address indexed user, uint256 amount);
+    event RewardChange(
+        uint256 oldReward,
+        uint256 newReward,
+        address indexed changedBy
+    );
 
     // Mapping for keeping track of each address's reward debt
     mapping(address => uint) public RewardDebtMap;
@@ -185,7 +190,11 @@ contract ONEO is ERC20, Ownable, ReentrancyGuard, Pausable {
 
     function setRewardsPerBlock(uint perBlock) external onlyOwner {
         updateRewards();
+
+        uint256 oldReward = rewardsPerBlock;
         rewardsPerBlock = perBlock;
+        
+        emit RewardChange(oldReward, perBlock, msg.sender);
     }
 
     function setRewardTokenAddress(
